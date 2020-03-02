@@ -2,4 +2,4 @@ package iface
 
 var LOGGER Logger
 
-var CONFIG Config
+var CONFIG Configer
