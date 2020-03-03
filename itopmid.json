@@ -1,0 +1,11 @@
+{
+    "itopurl": "http://localhost:8848",
+    "itopusername": "aumujun",
+    "itoppasswd": "goodluck@123",
+    "dingappkey": "fjdajdakaaaajkd9d9f9",
+    "dingappsecret": "dafdajfjldf8da9s8f97ads97f9adsf79a234324",
+    "dingapprovid": "f8f9daf878783884279439249329848328993278429",
+    "dingagentid": "djfakjda",
+    "dinguserid": "23423423412341",
+    "postgresurl": "root@localhost:5432"
+}
