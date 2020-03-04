@@ -1,32 +1,56 @@
 package support
 
 import (
-	"fmt"
 	"io/ioutil"
 
 	"github.com/0x1un/itopmid/iface"
+	"github.com/0x1un/itopmid/util"
 	json "github.com/json-iterator/go"
 )
 
 type ItopMidConfig struct {
-	ItopUrl       string `json:"itopurl"`
-	ItopUsername  string `json:"itopusername"`
-	ItopPasswd    string `json:"itoppasswd"`
-	DingAppkey    string `json:"dingappkey"`
-	DingAppsecret string `json:"dingappsecret"`
-	DingApprovID  string `json:"dingapprovid"`
-	DingAgentID   string `json:"dingagentid"`
-	DingUserID    string `json:"dinguserid"`
-	PostgresUrl   string `json:"postgresurl"`
+	ItopUrl        string `json:"itopurl"`
+	ItopUsername   string `json:"itopusername"`
+	ItopPasswd     string `json:"itoppasswd"`
+	DingAppkey     string `json:"dingappkey"`
+	DingAppsecret  string `json:"dingappsecret"`
+	DingApprovID   string `json:"dingapprovid"`
+	DingAgentID    string `json:"dingagentid"`
+	DingUserID     string `json:"dinguserid"`
+	PostgresAddr   string `json:"postgresaddr"`
+	PostgresPort   string `json:"postgresport"`
+	PostgresUname  string `json:"postgresuname"`
+	PostgresPasswd string `json:"postgrespasswd"`
+	PostgresDb     string `json:"postgresdb"`
 }
 
-func Test() {
-	i := &ItopMidConfig{}
-	i.ReadConfigFile("./itopmid.json")
-	fmt.Println(*i)
+func (self *ItopMidConfig) GetItopUrl() string {
+	return self.ItopUrl
 }
-
-func (self *ItopMidConfig) Init() {}
+func (self *ItopMidConfig) GetItopUsername() string {
+	return self.ItopUsername
+}
+func (self *ItopMidConfig) GetItopPassword() string {
+	return self.ItopPasswd
+}
+func (self *ItopMidConfig) GetDingAppkey() string {
+	return self.DingAppkey
+}
+func (self *ItopMidConfig) GetDingAppsecret() string {
+	return self.DingAppsecret
+}
+func (self *ItopMidConfig) GetDingApprovID() string {
+	return self.DingApprovID
+}
+func (self *ItopMidConfig) GetDingAgentID() string {
+	return self.DingAgentID
+}
+func (self *ItopMidConfig) GetDingUserID() string {
+	return self.DingUserID
+}
+func (self *ItopMidConfig) GetDatabaseURL() string {
+	return util.GenDBUrl(self.PostgresAddr, self.PostgresPort, self.PostgresDb, self.PostgresUname, self.PostgresPasswd)
+}
 
 func (self *ItopMidConfig) ReadConfigFile(filename string) {
 	content, err := ioutil.ReadFile(filename)
