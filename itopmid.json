@@ -7,5 +7,9 @@
     "dingapprovid": "f8f9daf878783884279439249329848328993278429",
     "dingagentid": "djfakjda",
     "dinguserid": "23423423412341",
-    "postgresurl": "root@localhost:5432"
+    "postgresaddr": "127.0.0.1",
+    "postgresport": "5432",
+    "postgresuname": "root",
+    "postgrespasswd": "goodluck@123",
+    "postgresdb": "itopmid"
 }
