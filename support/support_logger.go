@@ -2,7 +2,6 @@ package support
 
 import (
 	"fmt"
-	"log"
 	"runtime"
 	"time"
 
@@ -19,7 +18,7 @@ const (
 )
 
 type ItopMidLogger struct {
-	goLogger *log.Logger
+	//	goLogger *log.Logger
 }
 
 func (self *ItopMidLogger) Log(prefix, format string, v ...interface{}) string {
