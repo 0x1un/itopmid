@@ -1,16 +1,35 @@
 package main
 
-import "github.com/0x1un/itopmid/support"
+import (
+	_ "net/http/pprof"
+
+	"github.com/0x1un/itopmid/iface"
+	"github.com/0x1un/itopmid/support"
+)
 
 // 釘釘應用程序的agentid
 const (
 // iTopLocalURL = `http://localhost:8000/webservices/rest.php?version=1.3`
 )
 
+func init() {
+	// load config
+	config := &support.ItopMidConfig{}
+	config.ReadConfigFile("itopmid.json")
+	iface.CONFIG = config
+
+	// load logger
+	logger := &support.ItopMidLogger{}
+	iface.LOGGER = logger
+}
+
 func main() {
 
-	support.Test()
-
+	iface.LOGGER.Debug("这特么只是一个测试")
+	iface.LOGGER.Debug("%s", iface.CONFIG.GetDatabaseURL())
+	// mux := http.NewServeMux()
+	// mux.HandleFunc("/custom_debug_path/profile", pprof.Profile)
+	// log.Fatal(http.ListenAndServe(":7777", mux))
 	// request_data, err := NewRestAPIAuthData("admin", "...")
 	// if err != nil {
 	// 	panic(err)
