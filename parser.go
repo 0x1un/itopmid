@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/0x1un/boxes/dingtalk/api"
 	"strings"
+
+	"github.com/0x1un/boxes/dingtalk/api"
 )
 
 type location struct {
@@ -15,7 +16,14 @@ type location struct {
 func ConvertUserRequest(resp UserReqResponse) (formValues []api.FormValues) {
 	for _, v := range resp.Object {
 		location := titleParse(v.Filed.Title, "|")
-		fv := api.FillForm(location.City, location.Seat, location.Wb, "13800138000", location.FaultType, "单个台席", v.Filed.Description)
+		fv := api.FillFormTemplate(
+			location.City,       // 表单中的城市
+			location.Seat,       // 台席座号
+			location.Wb,         // 台席的域帐号
+			"13800138000",       // 联系方式（手机号）
+			location.FaultType,  // 故障的类型
+			"单个台席",              // 范围（单个台席/多个台席）
+			v.Filed.Description) // 故障的详细描述
 		formValues = append(formValues, fv)
 	}
 	return
