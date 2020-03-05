@@ -2,19 +2,17 @@ package main
 
 import (
 	"github.com/0x1un/boxes/dingtalk/api"
-	"errors"
-	"fmt"
-	"log"
+	"github.com/0x1un/itopmid/iface"
 )
 
-func SendToProv(c *api.DingTalkClient, resp UserReqResponse) error {
+// 这里调用SendProcess批量发送工单
+func SendToProv(c *api.DingTalkClient, resp UserReqResponse) {
 	formValueArray := ConvertUserRequest(resp)
 	for _, v := range formValueArray {
-		response, err := c.SendProcessForTest(v)
-		if response.ErrCode != 0 && err != nil {
-			return errors.New(fmt.Sprintf("%s", response.ErrMsg))
+		response, err := c.SendProcess(v)
+		if response.ErrCode != 0 || err != nil {
+			iface.LOGGER.Error(response.ErrMsg)
 		}
-		log.Printf("Sent a ticket succeed! status code: %d", response.ErrCode)
+		iface.LOGGER.Info("Sent a message succeeded")
 	}
-	return nil
 }
