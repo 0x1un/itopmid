@@ -9,13 +9,14 @@ import (
 )
 
 type ItopMidConfig struct {
+	DingAgentID    int64  `json:"dingagentid"`
+	DingDeptID     int64  `json:"dingdeptid"`
 	ItopUrl        string `json:"itopurl"`
 	ItopUsername   string `json:"itopusername"`
 	ItopPasswd     string `json:"itoppasswd"`
 	DingAppkey     string `json:"dingappkey"`
 	DingAppsecret  string `json:"dingappsecret"`
 	DingApprovID   string `json:"dingapprovid"`
-	DingAgentID    string `json:"dingagentid"`
 	DingUserID     string `json:"dinguserid"`
 	PostgresAddr   string `json:"postgresaddr"`
 	PostgresPort   string `json:"postgresport"`
@@ -42,7 +43,7 @@ func (self *ItopMidConfig) GetDingAppsecret() string {
 func (self *ItopMidConfig) GetDingApprovID() string {
 	return self.DingApprovID
 }
-func (self *ItopMidConfig) GetDingAgentID() string {
+func (self *ItopMidConfig) GetDingAgentID() int64 {
 	return self.DingAgentID
 }
 func (self *ItopMidConfig) GetDingUserID() string {
@@ -50,6 +51,10 @@ func (self *ItopMidConfig) GetDingUserID() string {
 }
 func (self *ItopMidConfig) GetDatabaseURL() string {
 	return util.GenDBUrl(self.PostgresAddr, self.PostgresPort, self.PostgresDb, self.PostgresUname, self.PostgresPasswd)
+}
+
+func (self *ItopMidConfig) GetDingDeptID() int64 {
+	return self.DingDeptID
 }
 
 func (self *ItopMidConfig) ReadConfigFile(filename string) {
