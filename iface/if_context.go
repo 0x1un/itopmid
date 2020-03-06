@@ -5,7 +5,7 @@ import (
 )
 
 type ItopMidContext interface {
-	OpenDB()
+	OpenDB(sqlType string)
 	CloseDB()
 	GetDB() *gorm.DB
 }

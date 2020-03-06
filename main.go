@@ -4,7 +4,7 @@ import (
 	_ "net/http/pprof"
 
 	"github.com/0x1un/boxes/dingtalk/api"
-	"github.com/0x1un/itopmid/db"
+	"github.com/0x1un/itopmid/core"
 	"github.com/0x1un/itopmid/iface"
 	"github.com/0x1un/itopmid/support"
 )
@@ -18,24 +18,24 @@ func init() {
 	// load logger
 	logger := &support.ItopMidLogger{}
 	iface.LOGGER = logger
+
+	// init database
+	context := &support.ItopMidContext{}
+	context.OpenDB("postgres")
+	iface.CONTEXT = context
 }
 
 func main() {
 
-	request_data, err := NewRestAPIAuthData(iface.CONFIG.GetItopUsername(), iface.CONFIG.GetItopPassword())
-	if err != nil {
-		panic(err)
-	}
-
-	conn, err := db.NewDBConnect()
+	request_data, err := core.NewRestAPIAuthData(iface.CONFIG.GetItopUsername(), iface.CONFIG.GetItopPassword())
 	if err != nil {
 		panic(err)
 	}
 
 	// 从itop中获取所有状态为开启的工单
-	resp := FetcheFromITOP(iface.CONFIG.GetItopUrl(), request_data)
+	resp := core.FetcheFromITOP(iface.CONFIG.GetItopUrl(), request_data)
 	for _, v := range resp.Object {
-		if err := StoreTicketFromITOP(conn, v.Filed); err != nil {
+		if err := core.StoreTicketFromITOP(iface.CONTEXT.GetDB(), v.Filed); err != nil {
 			iface.LOGGER.Error(err.Error())
 		}
 	}
@@ -46,5 +46,5 @@ func main() {
 	client.ProcessReq.OriginatorUserId = iface.CONFIG.GetDingUserID()
 	client.ProcessReq.ProcessCode = iface.CONFIG.GetDingApprovID()
 	// 发送来自itop的工单至钉钉工单中
-	SendToProv(client, resp)
+	core.SendToProv(client, resp)
 }
