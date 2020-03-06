@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	_ "net/http/pprof"
 
 	"github.com/0x1un/boxes/dingtalk/api"
@@ -36,7 +35,6 @@ func main() {
 	// 从itop中获取所有状态为开启的工单
 	resp := FetcheFromITOP(iface.CONFIG.GetItopUrl(), request_data)
 	for _, v := range resp.Object {
-		fmt.Println(v.Filed)
 		if err := StoreTicketFromITOP(conn, v.Filed); err != nil {
 			iface.LOGGER.Error(err.Error())
 		}

@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/0x1un/itopmid/iface"
 	"github.com/jinzhu/gorm"
 )
 
@@ -22,11 +23,11 @@ func ListenITOP(url string, data io.Reader) <-chan UserReqResponse {
 func FetcheFromITOP(url string, data io.Reader) UserReqResponse {
 	resp, err := request(http.MethodPost, url, data)
 	if err != nil {
-		panic(err)
+		iface.LOGGER.Panic(err.Error())
 	}
 	t := new(UserReqResponse)
 	if err := json.Unmarshal(resp, t); err != nil {
-		panic(err)
+		iface.LOGGER.Panic(err.Error())
 	}
 	return *t
 }

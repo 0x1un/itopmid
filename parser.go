@@ -7,23 +7,23 @@ import (
 )
 
 type location struct {
-	City      string
-	Seat      string
-	Wb        string
-	FaultType string
+	city          string
+	seat          string
+	domainAccount string
+	faultType     string
 }
 
 func ConvertUserRequest(resp UserReqResponse) (formValues []api.FormValues) {
 	for _, v := range resp.Object {
 		location := titleParse(v.Filed.Title, "|")
 		fv := api.FillFormTemplate(
-			location.City,       // 表单中的城市
-			location.Seat,       // 台席座号
-			location.Wb,         // 台席的域帐号
-			"13800138000",       // 联系方式（手机号）
-			location.FaultType,  // 故障的类型
-			"单个台席",              // 范围（单个台席/多个台席）
-			v.Filed.Description) // 故障的详细描述
+			location.city,          // 表单中的城市
+			location.seat,          // 台席座号
+			location.domainAccount, // 台席的域帐号
+			"13800138000",          // 联系方式（手机号）
+			location.faultType,     // 故障的类型
+			"单个台席",                 // 范围（单个台席/多个台席）
+			v.Filed.Description)    // 故障的详细描述
 		formValues = append(formValues, fv)
 	}
 	return
@@ -41,9 +41,9 @@ func titleParse(title, sep string) (location location) {
 	if len(res) < 3 {
 		return
 	}
-	location.City = res[0]
-	location.Seat = res[1]
-	location.Wb = res[2]
-	location.FaultType = res[3]
+	location.city = res[0]
+	location.seat = res[1]
+	location.domainAccount = res[2]
+	location.faultType = res[3]
 	return
 }
