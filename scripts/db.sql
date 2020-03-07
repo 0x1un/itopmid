@@ -8,7 +8,8 @@ create table if not exists itop_ticket (
     caller_id_friendlyname varchar(32) not null default '',
     impact varchar(1) not null default '',
     title varchar(255) not null default '',
-    description varchar(512) not null default ''
+    description varchar(512) not null default '',
+    send boolean not null default false
 );
 
 create table if not exists ding_approve (
