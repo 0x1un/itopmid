@@ -14,8 +14,8 @@ type location struct {
 	faultType     string
 }
 
-func ConvertUserRequest(resp UserReqResponse) *[]api.FormValues {
-	var formValues []api.FormValues
+func ConvertUserRequest(resp support.UserReqResponse) map[string]api.FormValues {
+	var formValues = make(map[string]api.FormValues)
 	for _, v := range resp.Object {
 		location := titleParse(v.Filed.Title, "|")
 		fv := api.FillFormTemplate(
@@ -24,11 +24,19 @@ func ConvertUserRequest(resp UserReqResponse) *[]api.FormValues {
 			location.domainAccount, // 台席的域帐号
 			"13800138000",          // 联系方式（手机号）
 			location.faultType,     // 故障的类型
-			"单个台席",                 // 范围（单个台席/多个台席）
-			v.Filed.Description)    // 故障的详细描述
-		formValues = append(formValues, fv)
+			func() string {
+				switch v.Filed.Impact {
+				case "1", "2", "部门", "服务":
+					return "多个台席"
+				case "3", "个体":
+					return "单个台席"
+				}
+				return "单个台席"
+			}(), // 范围（单个台席/多个台席）
+			strings.Trim(v.Filed.Description, "<p></p>")) // 故障的详细描述
+		formValues[v.Filed.Ref] = fv
 	}
-	return &formValues
+	return formValues
 }
 
 // title: city|seat|wb account
