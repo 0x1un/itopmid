@@ -20,7 +20,7 @@ func (self *ItopMidContext) OpenDB(sqlType string) {
 	if err != nil {
 		iface.LOGGER.Panic(err.Error())
 	}
-	self.db.LogMode(true)
+	self.db.LogMode(false)
 }
 
 func (self *ItopMidContext) CloseDB() {
