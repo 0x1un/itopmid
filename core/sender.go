@@ -12,9 +12,6 @@ import (
 // 	DATABASE_ERR_CODE = 2
 // )
 
-// 发送到钉钉遇到失败，放入此队列等待重试
-var retryQueue = make(map[string]api.FormValues)
-
 // 这里调用SendProcess批量发送工单
 func SendToDingtalkProcess(c *api.DingTalkClient, resp support.UserReqResponse) {
 	formComponent := ConvertUserRequest(resp)
@@ -22,12 +19,13 @@ func SendToDingtalkProcess(c *api.DingTalkClient, resp support.UserReqResponse) 
 		response, err := c.SendProcess(v)
 		if response.ErrCode != 0 || err != nil {
 			iface.LOGGER.Error(response.ErrMsg)
-			retryQueue[k] = v
+			// iface.TicketRetryQueue[k] = v
 			continue
 		}
 		if err := setItopTicketFlag(k); err != nil {
 			iface.LOGGER.Error(err.Error())
 		}
+		iface.LOGGER.Info("Sent a ticket: %s to dingtalk", k)
 	}
 }
 
