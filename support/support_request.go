@@ -78,7 +78,20 @@ func (self *RequestData) GenUserRequest() *strings.Reader {
 	return strings.NewReader(reqd.Encode())
 }
 
-func (self *RequestData) GenContactRequest() *strings.Reader { return nil }
+// 生成获取Person(个人联系人)的请求信息
+func (self *RequestData) GenPersonRequest() *strings.Reader {
+	reqd := make(url.Values)
+	br := buildRequest(
+		PERSON_REQUEST_OPERATION,
+		PERSON_REQUEST_CLASS,
+		PERSON_REQUEST_KEY,
+		PERSON_REQUEST_OUTPUTFIELDS,
+	)
+	reqd.Set("auth_user", iface.ITOP_USERNAME)
+	reqd.Set("auth_pwd", iface.ITOP_PASSWORD)
+	reqd.Set("json_data", string(br))
+	return strings.NewReader(reqd.Encode())
+}
 
 func buildRequest(
 	operation, class, key, output string) []byte {
