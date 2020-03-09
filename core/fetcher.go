@@ -29,6 +29,7 @@ func FetcheFromITOP(url string, data io.Reader) {
 		if !checkEntry(ref) {
 			if err := insertTicketITOP(v.Filed); err != nil {
 				iface.LOGGER.Error("Got error: %s", err.Error())
+				continue
 			}
 			iface.LOGGER.Info("ref: %s is inserted", ref)
 		} else {
