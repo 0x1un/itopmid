@@ -26,18 +26,24 @@ func FetcheFromITOP(url string, data io.Reader) {
 	for _, v := range t.Object {
 		// 如果获取的工单在数据库中不存在，则创建一条新记录
 		ref := v.Filed.Ref
-		if !checkEntry(ref) {
+		if !checkEntry(ref) || isSend(ref) {
+			if err := SendSingleTicketToDingtalkProcess(&v); err != nil {
+				iface.RETRY_QUEUE.Push(v)
+				iface.LOGGER.Error("Failed to send to dingtalk process, push to retry queuer and retry send")
+				continue
+			}
+			v.Filed.IsSend = true
 			if err := insertTicketITOP(v.Filed); err != nil {
 				iface.LOGGER.Error("Got error: %s", err.Error())
 				continue
 			}
 			iface.LOGGER.Info("ref: %s is inserted", ref)
 		} else {
-			// iface.LOGGER.Error("%s entry is already exists!", ref)
+			iface.LOGGER.Error("%s entry is already exists!", ref)
 			continue
 		}
 	}
-	SendToDingtalkProcess(iface.CLIENT, *t)
+	// SendToDingtalkProcess(iface.CLIENT, *t)
 }
 
 // 对数据库插入itop工单数据，插入的数据为Fileds中的工单详情
