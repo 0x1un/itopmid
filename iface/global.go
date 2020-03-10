@@ -15,3 +15,5 @@ var ITOP_PASSWORD string // ITOP password
 var REQUEST Requester // ITOP 请求的数据，包含UserRequest, Contact, Person 之类的请求数据与响应数据
 
 var CLIENT *api.DingTalkClient
+
+var RETRY_QUEUE TicketRetryQueuer
