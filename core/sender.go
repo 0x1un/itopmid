@@ -17,7 +17,7 @@ func SendToDingtalkProcess(c *api.DingTalkClient, resp support.UserReqResponse) 
 	formComponent := ConvertUserRequest(resp)
 	for k, v := range formComponent {
 		// 如果查到这个值并没有被发送过的记录，则将其发送
-		if isSend(k) {
+		if !isSend(k) {
 			response, err := c.SendProcess(v)
 			// 如果发送失败，输出失败原因到日志
 			if response.ErrCode != 0 || err != nil {
@@ -30,6 +30,10 @@ func SendToDingtalkProcess(c *api.DingTalkClient, resp support.UserReqResponse) 
 			iface.LOGGER.Info("Sent a ticket: %s to dingtalk", k)
 		}
 	}
+}
+
+// 发送单个工单到钉钉, 依然调用钉钉的SendProcess接口（自行封装的)
+func SendSingleTicketToDingtalk() {
 }
 
 // 标记itop工单为已发送, 字段 *send*
@@ -49,9 +53,9 @@ func isSend(ref string) bool {
 	h := iface.CONTEXT.GetDB().Table("itop_ticket")
 	if isNotFound := h.Where("ref = ? and send = ?", ref, false).Scan(result).RecordNotFound(); !isNotFound {
 		// !isNotFound if found *send=false* then return true
-		return true
+		return false
 	}
-	return false
+	return true
 }
 
 func isSenda(ref string) bool {
