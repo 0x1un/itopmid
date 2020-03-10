@@ -30,8 +30,13 @@ func (self *ItopMidLogger) Log(prefix, format string, v ...interface{}) string {
 		line = 0
 	}
 	// prefix + time of now + file path : current line + content
-	consoLog := fmt.Sprintf("%s%s %s:%d %s", prefix, util.FormatTimeToString(time.Now()),
-		file, line, content)
+	consoLog := fmt.Sprintf(
+		"%s%s %s:%d %s",
+		prefix,
+		util.FormatTimeToString(time.Now()),
+		util.GetCurrentPath(file),
+		line,
+		content)
 	return consoLog
 }
 
