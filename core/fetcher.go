@@ -24,12 +24,13 @@ func FetcheFromITOP(url string, data io.Reader) {
 	}
 	// 将获取的工单数据插入到数据库
 	for _, v := range t.Object {
-		// 如果获取的工单在数据库中不存在，则创建一条新记录
 		ref := v.Filed.Ref
-		if !checkEntry(ref) || isSend(ref) {
+		// 如果找到了这条记录而它没有被发送过 或者 这条记录已经存在
+		if !isSend(ref) || !checkEntry(ref) {
 			if err := SendSingleTicketToDingtalkProcess(&v); err != nil {
 				iface.RETRY_QUEUE.Push(v)
 				iface.LOGGER.Error("Failed to send to dingtalk process, push to retry queuer and retry send")
+				iface.LOGGER.Error(err.Error())
 				continue
 			}
 			v.Filed.IsSend = true
