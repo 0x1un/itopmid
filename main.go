@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	_ "net/http/pprof"
 
 	"github.com/0x1un/boxes/dingtalk/api"
 	"github.com/0x1un/itopmid/core"
