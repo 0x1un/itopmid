@@ -19,8 +19,11 @@ func SendSingleTicketToDingtalkProcess(content *support.ResponseContent) error {
 	form := ConvertSingleUserRequest(content)
 	// if isSend(ref) {
 	resp, err := iface.CLIENT.SendProcess(*form)
-	if resp.ErrCode != 0 || err != nil {
-		return fmt.Errorf("error msg: %s\n", resp.ErrMsg)
+	if err != nil {
+		return err
+	}
+	if resp.ErrCode != 0 {
+		return fmt.Errorf("%s", resp.ErrMsg)
 	}
 	if err := setItopTicketFlag(ref); err != nil {
 		return err
@@ -69,9 +72,11 @@ func setItopTicketFlag(ref string) error {
 func isSend(ref string) bool {
 	result := &support.Fileds{}
 	h := iface.CONTEXT.GetDB().Table("itop_ticket")
-	if isNotFound := h.Where("ref = ? and send = ?", ref, false).Scan(result).RecordNotFound(); !isNotFound {
+	if isNotFound := h.Where("ref = ? and send = ?", ref, false).Scan(result).RecordNotFound(); isNotFound {
 		// !isNotFound if found *send=false* then return true
-		return false
+		iface.LOGGER.Debug("ref: %s 已经被发送过了", ref)
+		return true
 	}
-	return true
+	iface.LOGGER.Debug("ref: %s 没被发送", ref)
+	return false
 }
