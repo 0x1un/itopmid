@@ -14,27 +14,32 @@ type location struct {
 	faultType     string
 }
 
-func ConvertUserRequest(resp support.UserReqResponse) map[string]api.FormValues {
+// 这里接收一个指针，不要拷贝
+func ConvertSingleUserRequest(resp *support.ResponseContent) *api.FormValues {
+	loc := titleParse(resp.Filed.Title, "|")
+	form := api.FillFormTemplate(
+		loc.city,
+		loc.seat,
+		loc.domainAccount,
+		"13800138000",
+		loc.faultType,
+		func() string {
+			switch resp.Filed.Impact {
+			case "1", "2", "部门", "服务":
+				return "多个台席"
+			case "3", "个体":
+				return "单个台席"
+			}
+			return "单个台席"
+		}(),
+		strings.Trim(resp.Filed.Description, "</p>"))
+	return &form
+}
+
+func ConvertBatchUserRequest(resp support.UserReqResponse) map[string]api.FormValues {
 	var formValues = make(map[string]api.FormValues)
 	for _, v := range resp.Object {
-		location := titleParse(v.Filed.Title, "|")
-		fv := api.FillFormTemplate(
-			location.city,          // 表单中的城市
-			location.seat,          // 台席座号
-			location.domainAccount, // 台席的域帐号
-			"13800138000",          // 联系方式（手机号）
-			location.faultType,     // 故障的类型
-			func() string {
-				switch v.Filed.Impact {
-				case "1", "2", "部门", "服务":
-					return "多个台席"
-				case "3", "个体":
-					return "单个台席"
-				}
-				return "单个台席"
-			}(), // 范围（单个台席/多个台席）
-			strings.Trim(v.Filed.Description, "<p></p>")) // 故障的详细描述
-		formValues[v.Filed.Ref] = fv
+		formValues[v.Filed.Ref] = *ConvertSingleUserRequest(&v)
 	}
 	return formValues
 }

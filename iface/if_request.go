@@ -1,6 +1,8 @@
 package iface
 
-import "strings"
+import (
+	"strings"
+)
 
 type Requester interface {
 	GenUserRequest() *strings.Reader
@@ -8,4 +10,7 @@ type Requester interface {
 }
 
 type TicketRetryQueuer interface {
+	Pop() interface{}
+	Push(content interface{})
+	Len() int
 }

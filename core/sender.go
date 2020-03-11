@@ -1,6 +1,8 @@
 package core
 
 import (
+	"fmt"
+
 	"github.com/0x1un/boxes/dingtalk/api"
 	"github.com/0x1un/itopmid/iface"
 	"github.com/0x1un/itopmid/support"
@@ -12,9 +14,25 @@ import (
 // 	DATABASE_ERR_CODE = 2
 // )
 
+func SendSingleTicketToDingtalkProcess(content *support.ResponseContent) error {
+	ref := content.Filed.Ref
+	form := ConvertSingleUserRequest(content)
+	// if isSend(ref) {
+	resp, err := iface.CLIENT.SendProcess(*form)
+	if resp.ErrCode != 0 || err != nil {
+		return fmt.Errorf("error msg: %s\n", resp.ErrMsg)
+	}
+	if err := setItopTicketFlag(ref); err != nil {
+		return err
+	}
+	iface.LOGGER.Info("Sent ticket: *%s* to dingtalk process", ref)
+	// }
+	return nil
+}
+
 // 这里调用SendProcess批量发送工单
-func SendToDingtalkProcess(c *api.DingTalkClient, resp support.UserReqResponse) {
-	formComponent := ConvertUserRequest(resp)
+func sendToDingtalkProcess(c *api.DingTalkClient, resp support.UserReqResponse) {
+	formComponent := ConvertBatchUserRequest(resp)
 	for k, v := range formComponent {
 		// 如果查到这个值并没有被发送过的记录，则将其发送
 		if !isSend(k) {
@@ -56,8 +74,4 @@ func isSend(ref string) bool {
 		return false
 	}
 	return true
-}
-
-func isSenda(ref string) bool {
-	return false
 }

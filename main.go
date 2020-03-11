@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	_ "net/http/pprof"
 
 	"github.com/0x1un/boxes/dingtalk/api"
@@ -30,6 +31,10 @@ func init() {
 	context.OpenDB("postgres")
 	iface.CONTEXT = context
 
+	// init retry queuer
+	queue := &support.RetryQueue{}
+	iface.RETRY_QUEUE = queue
+
 	// init dingtalk client
 	client := api.NewClient(iface.CONFIG.GetDingAppkey(), iface.CONFIG.GetDingAppsecret())
 	client.ProcessReq.DeptId = iface.CONFIG.GetDingDeptID()
@@ -44,4 +49,5 @@ func main() {
 	defer iface.CONTEXT.CloseDB()
 
 	core.FetcheFromITOP(iface.CONFIG.GetItopUrl(), iface.REQUEST.GenUserRequest())
+	fmt.Println(iface.RETRY_QUEUE)
 }
