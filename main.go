@@ -49,5 +49,7 @@ func main() {
 	defer iface.CONTEXT.CloseDB()
 
 	core.FetcheFromITOP(iface.CONFIG.GetItopUrl(), iface.REQUEST.GenUserRequest())
-	fmt.Println(iface.RETRY_QUEUE)
+	if iface.RETRY_QUEUE.Len() > 0 {
+		fmt.Println(iface.RETRY_QUEUE)
+	}
 }
