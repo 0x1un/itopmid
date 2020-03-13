@@ -38,14 +38,14 @@ func setItopTicketFlag(ref string) error {
 	return nil
 }
 
-func isSend(ref string) bool {
+func existButNotSend(ref string) bool {
 	result := &support.Fileds{}
 	h := iface.CONTEXT.GetDB().Table("itop_ticket")
 	if isNotFound := h.Where("ref = ? and send = ?", ref, false).Scan(result).RecordNotFound(); isNotFound {
 		// !isNotFound if found *send=false* then return true
-		iface.LOGGER.Debug("ref: %s 已经被发送过了", ref)
-		return true
+		// iface.LOGGER.Debug("ref: %s 已经被发送过了", ref)
+		return false
 	}
-	iface.LOGGER.Debug("ref: %s 没被发送", ref)
-	return false
+	// iface.LOGGER.Debug("ref: %s 没被发送", ref)
+	return true
 }
