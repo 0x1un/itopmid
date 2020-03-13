@@ -2,6 +2,7 @@ package support
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/url"
 	"strings"
 
@@ -9,7 +10,6 @@ import (
 )
 
 const (
-
 	// user request message
 	USER_REQUEST_OPERATION    = "core/get"
 	USER_REQUEST_CLASS        = "UserRequest"
@@ -19,8 +19,8 @@ const (
 	// contact request message
 	PERSON_REQUEST_OPERATION    = "core/get"
 	PERSON_REQUEST_CLASS        = "Person"
-	PERSON_REQUEST_KEY          = "SELECT Person WHERE"
-	PERSON_REQUEST_OUTPUTFIELDS = ""
+	PERSON_REQUEST_KEY          = "SELECT Person WHERE friendlyname='%s'"
+	PERSON_REQUEST_OUTPUTFIELDS = "phone,name,first_name,mobile_phone"
 )
 
 // UserRequest structure
@@ -30,17 +30,21 @@ type Base struct {
 }
 
 type Fileds struct {
-	Ref                    string        `json:"ref" gorm:"column:ref"`                                         // itop工单中的序列号，唯一
-	RequestType            string        `json:"request_type" gorm:"column:request_type"`                       // 服务请求类型
-	ServiceSubcategoryName string        `json:"servicesubcategory_name" gorm:"column:servicesubcategory_name"` // 子服务名称 （最终的服务）
-	Urgency                string        `json:"urgency" gorm:"column:urgency"`                                 // 紧急度
-	Origin                 string        `json:"origin" gorm:"column:origin"`                                   // 工单来源
-	CallerIdFriendlyName   string        `json:"caller_id_friendlyname" gorm:"column:caller_id_friendlyname"`   // 工单发起者名称
-	Impact                 string        `json:"impact" gorm:"column:impact"`                                   // 影响范围
-	Title                  string        `json:"title" gorm:"column:title"`                                     // 标题
-	Description            string        `json:"description" gorm:"column:description"`                         // 描述
-	Contacts               []interface{} `json:"contacts_list" gorm:"-"`
-	IsSend                 bool          `json:"-" gorm:"column:send"`
+	Ref                    string                   `json:"ref" gorm:"column:ref"`                                         // itop工单中的序列号，唯一
+	RequestType            string                   `json:"request_type" gorm:"column:request_type"`                       // 服务请求类型
+	ServiceSubcategoryName string                   `json:"servicesubcategory_name" gorm:"column:servicesubcategory_name"` // 子服务名称 （最终的服务）
+	Urgency                string                   `json:"urgency" gorm:"column:urgency"`                                 // 紧急度
+	Origin                 string                   `json:"origin" gorm:"column:origin"`                                   // 工单来源
+	CallerIdFriendlyName   string                   `json:"caller_id_friendlyname" gorm:"column:caller_id_friendlyname"`   // 工单发起者名称
+	Impact                 string                   `json:"impact" gorm:"column:impact"`                                   // 影响范围
+	Title                  string                   `json:"title" gorm:"column:title"`                                     // 标题
+	Description            string                   `json:"description" gorm:"column:description"`                         // 描述
+	Contacts               []map[string]interface{} `json:"contacts_list" gorm:"-"`
+	IsSend                 bool                     `json:"-" gorm:"column:send"`
+	MobilePhone            string                   `json:"mobile_phone" gorm:"-"`
+	Phone                  string                   `json:"phone" gorm:"-"`
+	Name                   string                   `json:"name" gorm:"-"`
+	FirstName              string                   `json:"first_name" gorm:"-"`
 }
 
 type ResponseContent struct {
@@ -79,12 +83,12 @@ func (self *RequestData) GenUserRequest() *strings.Reader {
 }
 
 // 生成获取Person(个人联系人)的请求信息
-func (self *RequestData) GenPersonRequest() *strings.Reader {
+func (self *RequestData) GenPersonRequest(friendlyname string) *strings.Reader {
 	reqd := make(url.Values)
 	br := buildRequest(
 		PERSON_REQUEST_OPERATION,
 		PERSON_REQUEST_CLASS,
-		PERSON_REQUEST_KEY,
+		fmt.Sprintf(PERSON_REQUEST_KEY, friendlyname),
 		PERSON_REQUEST_OUTPUTFIELDS,
 	)
 	reqd.Set("auth_user", iface.ITOP_USERNAME)
