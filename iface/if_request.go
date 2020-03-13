@@ -6,7 +6,7 @@ import (
 
 type Requester interface {
 	GenUserRequest() *strings.Reader
-	GenPersonRequest() *strings.Reader
+	GenPersonRequest(friendlyname string) *strings.Reader
 }
 
 type TicketRetryQueuer interface {
