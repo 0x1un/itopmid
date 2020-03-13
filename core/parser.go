@@ -21,7 +21,7 @@ func ConvertSingleUserRequest(resp *support.ResponseContent) *api.FormValues {
 		loc.city,
 		loc.seat,
 		loc.domainAccount,
-		"13800138000",
+		resp.Filed.MobilePhone,
 		loc.faultType,
 		func() string {
 			switch resp.Filed.Impact {
