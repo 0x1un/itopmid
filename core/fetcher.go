@@ -3,6 +3,7 @@ package core
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -22,56 +23,80 @@ func FetcheFromITOP(url string, data io.Reader) {
 	if err := json.Unmarshal(resp, t); err != nil {
 		iface.LOGGER.Panic(err.Error())
 	}
-	// 将获取的工单数据插入到数据库
 	for _, v := range t.Object {
 		ref := v.Filed.Ref
-		// 如果找到了这条记录而它没有被发送过 或者 这条记录已经存在
-		if !isSend(ref) || !checkEntry(ref) {
-			if err := SendSingleTicketToDingtalkProcess(&v); err != nil {
-				iface.RETRY_QUEUE.Push(v)
-				iface.LOGGER.Error("Failed to send to dingtalk process, push to retry queuer and retry send")
+		phone := "13800138000"
+		if friendlyname := extractFriendlyNameByContact(v.Filed.Contacts); friendlyname != "" {
+			reqData := iface.REQUEST.GenPersonRequest(friendlyname)
+			presp, err := request(http.MethodPost, url, reqData)
+			if err != nil {
+				iface.LOGGER.Panic(err.Error())
+			}
+			// rct = responseContent
+			rct := new(support.UserReqResponse)
+			if err := json.Unmarshal(presp, rct); err != nil {
 				iface.LOGGER.Error(err.Error())
+			}
+			fmt.Println(rct)
+			for _, x := range rct.Object {
+				if p := x.Filed.MobilePhone; len(p) != 0 {
+					phone = p
+				}
+			}
+		}
+		if entryNotFound(ref) {
+			v.Filed.MobilePhone = phone
+			if err := SendSingleTicketToDingtalkProcess(&v); err != nil {
+				iface.LOGGER.Debug(fmt.Sprintf("Failed to send ticket: %s", err.Error()))
+				iface.RETRY_QUEUE.Push(v)
 				continue
 			}
 			v.Filed.IsSend = true
 			if err := insertTicketITOP(v.Filed); err != nil {
-				iface.LOGGER.Error("Got error: %s", err.Error())
+				iface.LOGGER.Debug("Got error: %s", err.Error())
 				continue
 			}
 			iface.LOGGER.Info("ref: %s is inserted", ref)
 		} else {
-			iface.LOGGER.Error("%s entry is already exists!", ref)
-			continue
+			iface.LOGGER.Debug("Entry may already exist or sended")
 		}
 	}
-	// SendToDingtalkProcess(iface.CLIENT, *t)
 }
 
 // 对数据库插入itop工单数据，插入的数据为Fileds中的工单详情
 func insertTicketITOP(ticket support.Fileds) error {
-	var e error
-	h := iface.CONTEXT.GetDB().Begin()
-	h = h.Table("itop_ticket")
-	e = h.Create(ticket).Error
-	if e != nil {
-		h.Rollback()
-		return e
+	var err error
+	dbCtx := iface.CONTEXT.GetDB().Begin()
+	dbCtx = dbCtx.Table("itop_ticket")
+	err = dbCtx.Create(ticket).Error
+	if err != nil {
+		dbCtx.Rollback()
+		return err
 	}
-	h.Commit()
+	dbCtx.Commit()
 	return nil
 }
 
 // 判断itop的工单是否已经被获取, 判断的依据是itop中工单唯一编码ref
 // 如果没有 返回false, 反之亦然
-func checkEntry(ref string) bool {
-	h := iface.CONTEXT.GetDB().Begin()
+func entryNotFound(ref string) bool {
+	h := iface.CONTEXT.GetDB()
 	h = h.Table("itop_ticket")
 	nf := h.Select("ref").Where("ref=?", ref).Scan(&struct{ Rf string }{}).RecordNotFound()
 	if nf {
-		return false
-	} else {
 		return true
 	}
+	return false
+}
+
+// get friendly name from contact list
+func extractFriendlyNameByContact(ctt []map[string]interface{}) string {
+	for _, v := range ctt {
+		if len(v) != 0 {
+			return v["contact_id_friendlyname"].(string)
+		}
+	}
+	return ""
 }
 
 // 简单封装的http请求
