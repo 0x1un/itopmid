@@ -13,7 +13,6 @@ import (
 	"github.com/0x1un/itopmid/support"
 )
 
-// 返回来自itop的标准门户工单数据
 func FetcheFromITOP(url string, data io.Reader) {
 	resp, err := request(http.MethodPost, url, data)
 	if err != nil {
@@ -63,7 +62,6 @@ func FetcheFromITOP(url string, data io.Reader) {
 	}
 }
 
-// 对数据库插入itop工单数据，插入的数据为Fileds中的工单详情
 func insertTicketITOP(ticket support.Fileds) error {
 	var err error
 	dbCtx := iface.CONTEXT.GetDB().Begin()
@@ -77,8 +75,6 @@ func insertTicketITOP(ticket support.Fileds) error {
 	return nil
 }
 
-// 判断itop的工单是否已经被获取, 判断的依据是itop中工单唯一编码ref
-// 如果没有 返回false, 反之亦然
 func entryNotFound(ref string) bool {
 	h := iface.CONTEXT.GetDB()
 	h = h.Table("itop_ticket")
@@ -89,7 +85,6 @@ func entryNotFound(ref string) bool {
 	return false
 }
 
-// get friendly name from contact list
 func extractFriendlyNameByContact(ctt []map[string]interface{}) string {
 	for _, v := range ctt {
 		if len(v) != 0 {
@@ -99,7 +94,6 @@ func extractFriendlyNameByContact(ctt []map[string]interface{}) string {
 	return ""
 }
 
-// 简单封装的http请求
 func request(method, url string, data io.Reader) ([]byte, error) {
 	req, err := http.NewRequest(method, url, data)
 	if err != nil {
