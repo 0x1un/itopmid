@@ -10,7 +10,6 @@ import (
 func SendSingleTicketToDingtalkProcess(content *support.ResponseContent) error {
 	ref := content.Filed.Ref
 	form := ConvertSingleUserRequest(content)
-	// if isSend(ref) {
 	resp, err := iface.CLIENT.SendProcess(*form)
 	if err != nil {
 		return err
@@ -22,7 +21,12 @@ func SendSingleTicketToDingtalkProcess(content *support.ResponseContent) error {
 		return err
 	}
 	iface.LOGGER.Info("Sent ticket: *%s* to dingtalk process", ref)
-	// }
+	return nil
+}
+
+func insertDingProcessID(processID string) error {
+	db := iface.CONTEXT.GetDB().Begin()
+	err := db.Table("ding_approve")
 	return nil
 }
 
@@ -42,10 +46,7 @@ func existButNotSend(ref string) bool {
 	result := &support.Fileds{}
 	h := iface.CONTEXT.GetDB().Table("itop_ticket")
 	if isNotFound := h.Where("ref = ? and send = ?", ref, false).Scan(result).RecordNotFound(); isNotFound {
-		// !isNotFound if found *send=false* then return true
-		// iface.LOGGER.Debug("ref: %s 已经被发送过了", ref)
 		return false
 	}
-	// iface.LOGGER.Debug("ref: %s 没被发送", ref)
 	return true
 }
