@@ -10,7 +10,6 @@ import (
 func SendSingleTicketToDingtalkProcess(content *support.ResponseContent) error {
 	ref := content.Filed.Ref
 	form := ConvertSingleUserRequest(content)
-	// if isSend(ref) {
 	resp, err := iface.CLIENT.SendProcess(*form)
 	if err != nil {
 		return err
@@ -22,7 +21,6 @@ func SendSingleTicketToDingtalkProcess(content *support.ResponseContent) error {
 		return err
 	}
 	iface.LOGGER.Info("Sent ticket: *%s* to dingtalk process", ref)
-	// }
 	return nil
 }
 
