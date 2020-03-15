@@ -13,6 +13,10 @@ import (
 	"github.com/0x1un/itopmid/support"
 )
 
+const (
+	DEFAULT_MOBILE_PHONE = "13800138000"
+)
+
 // 返回来自itop的标准门户工单数据
 func FetcheFromITOP(url string, data io.Reader) {
 	resp, err := request(http.MethodPost, url, data)
@@ -25,7 +29,7 @@ func FetcheFromITOP(url string, data io.Reader) {
 	}
 	for _, v := range t.Object {
 		ref := v.Filed.Ref
-		phone := "13800138000"
+		phone := DEFAULT_MOBILE_PHONE
 		if friendlyname := extractFriendlyNameByContact(v.Filed.Contacts); friendlyname != "" {
 			reqData := iface.REQUEST.GenPersonRequest(friendlyname)
 			presp, err := request(http.MethodPost, url, reqData)
