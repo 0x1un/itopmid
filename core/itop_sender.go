@@ -17,10 +17,28 @@ func SendSingleTicketToDingtalkProcess(content *support.ResponseContent) error {
 	if resp.ErrCode != 0 {
 		return fmt.Errorf("%s", resp.ErrMsg)
 	}
-	if err := setItopTicketFlag(ref); err != nil {
+	if err := insertDingProcessID(resp.ProcessInstanceId); err != nil {
 		return err
 	}
+	// if err := setItopTicketFlag(ref); err != nil {
+	// 	return err
+	// }
 	iface.LOGGER.Info("Sent ticket: *%s* to dingtalk process", ref)
+	return nil
+}
+
+func insertDingProcessID(processid string) error {
+	db := iface.CONTEXT.GetDB().Begin()
+	if err := db.Table("ding_approve").Create(
+		struct {
+			ProcessId string `gorm:"column:process_id"`
+		}{
+			ProcessId: processid,
+		}).Error; err != nil {
+		db.Rollback()
+		return err
+	}
+	db.Commit()
 	return nil
 }
 
@@ -40,10 +58,7 @@ func existButNotSend(ref string) bool {
 	result := &support.Fileds{}
 	h := iface.CONTEXT.GetDB().Table("itop_ticket")
 	if isNotFound := h.Where("ref = ? and send = ?", ref, false).Scan(result).RecordNotFound(); isNotFound {
-		// !isNotFound if found *send=false* then return true
-		// iface.LOGGER.Debug("ref: %s 已经被发送过了", ref)
 		return false
 	}
-	// iface.LOGGER.Debug("ref: %s 没被发送", ref)
 	return true
 }
