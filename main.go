@@ -51,4 +51,6 @@ func main() {
 	if iface.RETRY_QUEUE.Len() > 0 {
 		fmt.Println(iface.RETRY_QUEUE)
 	}
+	code := core.GetProcessStatusByID("9996c2ea-29ba-4dad-b8e5-6e796cb3b4ea")
+	fmt.Println(code)
 }
