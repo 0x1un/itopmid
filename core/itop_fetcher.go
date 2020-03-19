@@ -40,7 +40,6 @@ func FetcheFromITOP(url string, data io.Reader) {
 			if err := json.Unmarshal(presp, rct); err != nil {
 				iface.LOGGER.Error(err.Error())
 			}
-			fmt.Println(rct)
 			for _, x := range rct.Object {
 				if p := x.Filed.MobilePhone; len(p) != 0 {
 					phone = p
