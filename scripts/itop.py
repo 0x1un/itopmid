@@ -1,7 +1,20 @@
 #!/usr/bin/python3
 import requests, json
 
-HOST = "http://127.0.0.1:8096/itop/webservices/rest.php?version=1.0"
+HOST = "http://140.246.60.181:8096/itop/webservices/rest.php?version=1.3"
+
+json_str2 = json.dumps({
+    "operation": "core/update",
+    "class": "UserRequest",
+    "comment": "close ticket",
+    "key": {
+        "status": "closed"
+    },
+    "output_fields": "status",
+    "fields": {
+        "status": "resolved"
+    }
+})
 
 json_str = json.dumps({
     "operation":
@@ -17,7 +30,7 @@ json_str = json.dumps({
 json_data = {
     "auth_user": "",
     "auth_pwd": ".",
-    "json_data": json_str
+    "json_data": json_str2
 }
 
 
