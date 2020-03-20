@@ -47,10 +47,10 @@ func main() {
 
 	defer iface.CONTEXT.CloseDB()
 
-	core.FetcheFromITOP(iface.CONFIG.GetItopUrl(), iface.REQUEST.GenUserRequest())
-	if iface.RETRY_QUEUE.Len() > 0 {
-		fmt.Println(iface.RETRY_QUEUE)
-	}
+	// core.FetcheFromITOP(iface.CONFIG.GetItopUrl(), iface.REQUEST.GenUserRequest())
+	// if iface.RETRY_QUEUE.Len() > 0 {
+	// 	fmt.Println(iface.RETRY_QUEUE)
+	// }
 	code := core.GetProcessStatusByID("629e713f-5973-469a-a1f5-359b0df22a7c")
 	fmt.Println(code)
 }

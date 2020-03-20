@@ -31,5 +31,5 @@ func GetProcessStatusByID(id string) int {
 	case "COMPLETED":
 		return PROCESS_IS_COMPLETED
 	}
-	return PROCESS_IS_RUNNING
+	return PROCESS_UNKOWN_ERROR
 }
