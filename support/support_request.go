@@ -67,6 +67,44 @@ type RequestData struct {
 	Key          string `json:"key"`           // OQL查询语句
 	OutPutFields string `json:"output_fields"` // 需要输出哪些数据（此对应返回数据的Field
 }
+type UpdateKey struct {
+	Status string `json:"status"`
+	Ref    string `json:"ref"`
+}
+
+type UpdateFields struct {
+	Status string `json:"status"`
+}
+
+type RequestUpdate struct {
+	Operation    string       `json:"operation"`
+	Class        string       `json:"class"`
+	Comment      string       `json:"comment"`
+	OutputFields string       `json:"output_fields"`
+	Key          UpdateKey    `json:"key"`
+	Fields       UpdateFields `json:"fields"`
+}
+
+func NewRequestUpdateData(cls string, key *UpdateKey, fields *UpdateFields) *strings.Reader {
+	rd := &RequestUpdate{
+		Operation:    "core/update",
+		Class:        cls,
+		Comment:      "itopmid updates",
+		Key:          *key,
+		OutputFields: "status",
+		Fields:       *fields,
+	}
+	jd, err := json.Marshal(rd)
+	if err != nil {
+		iface.LOGGER.Error(err.Error())
+		return nil
+	}
+	param := make(url.Values)
+	param.Set("auth_user", iface.ITOP_USERNAME)
+	param.Set("auth_pwd", iface.ITOP_PASSWORD)
+	param.Set("json_data", string(jd))
+	return strings.NewReader(param.Encode())
+}
 
 func (self *RequestData) GenUserRequest() *strings.Reader {
 	reqd := make(url.Values)
