@@ -1,7 +1,11 @@
 package core
 
 import (
+	"encoding/json"
+	"net/http"
+
 	"github.com/0x1un/itopmid/iface"
+	"github.com/0x1un/itopmid/support"
 )
 
 const (
@@ -32,4 +36,31 @@ func GetProcessStatusByID(id string) int {
 		return PROCESS_IS_COMPLETED
 	}
 	return PROCESS_UNKOWN_ERROR
+}
+
+func UpdateItopTicket(ref string) {
+	key := &support.UpdateKey{
+		Status: "new",
+		Ref:    ref,
+	}
+	fields := &support.UpdateFields{
+		Status: "resolved",
+	}
+	// ud => update request data
+	ud := support.NewRequestUpdateData("UserRequest", key, fields)
+	rsp, err := Request(http.MethodPost, iface.CONFIG.GetItopUrl(), ud)
+	if err != nil {
+		iface.LOGGER.Error(err.Error())
+		return
+	}
+	t := &support.UserReqResponse{}
+	if err := json.Unmarshal(rsp, t); err != nil {
+		iface.LOGGER.Error(err.Error())
+		return
+	}
+	if t.Code != 0 {
+		iface.LOGGER.Error(t.Message)
+		return
+	}
+	iface.LOGGER.Info(t.Message)
 }
