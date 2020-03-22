@@ -1,18 +1,19 @@
 #!/usr/bin/python3
 import requests, json
 
-HOST = "http://140.246.60.181:8096/itop/webservices/rest.php?version=1.3"
+HOST = "http://127.0.0.1:8000/webservices/rest.php?version=1.3"
 
 json_str2 = json.dumps({
     "operation": "core/update",
     "class": "UserRequest",
     "comment": "close ticket",
     "key": {
-        "status": "closed"
+        "ref": "R-000006",
+        "status": "resolved"
     },
     "output_fields": "status",
     "fields": {
-        "status": "resolved"
+        "status": "new"
     }
 })
 
@@ -28,8 +29,8 @@ json_str = json.dumps({
     "*",
 })
 json_data = {
-    "auth_user": "",
-    "auth_pwd": ".",
+    "auth_user": "admin",
+    "auth_pwd": "goodluck@123.",
     "json_data": json_str2
 }
 
@@ -43,3 +44,4 @@ def get():
 if __name__ == "__main__":
     result = get()
     print(json.dumps(result.json()))
+    # print(json.loads(json_str2))
