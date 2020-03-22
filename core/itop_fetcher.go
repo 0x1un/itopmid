@@ -18,7 +18,7 @@ const (
 )
 
 func FetcheFromITOP(url string, data io.Reader) {
-	resp, err := request(http.MethodPost, url, data)
+	resp, err := Request(http.MethodPost, url, data)
 	if err != nil {
 		iface.LOGGER.Panic(err.Error())
 	}
@@ -31,7 +31,7 @@ func FetcheFromITOP(url string, data io.Reader) {
 		phone := DEFAULT_MOBILE_PHONE
 		if friendlyname := extractFriendlyNameByContact(v.Filed.Contacts); friendlyname != "" {
 			reqData := iface.REQUEST.GenPersonRequest(friendlyname)
-			presp, err := request(http.MethodPost, url, reqData)
+			presp, err := Request(http.MethodPost, url, reqData)
 			if err != nil {
 				iface.LOGGER.Panic(err.Error())
 			}
@@ -97,7 +97,7 @@ func extractFriendlyNameByContact(ctt []map[string]interface{}) string {
 	return ""
 }
 
-func request(method, url string, data io.Reader) ([]byte, error) {
+func Request(method, url string, data io.Reader) ([]byte, error) {
 	req, err := http.NewRequest(method, url, data)
 	if err != nil {
 		return nil, err
