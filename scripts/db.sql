@@ -9,7 +9,9 @@ create table if not exists itop_ticket (
     impact varchar(1) not null default '',
     title varchar(255) not null default '',
     description varchar(512) not null default '',
-    send boolean not null default false
+    send boolean not null default false,
+    processid varchar(255) not null default '',
+    resolved boolean not null default false
 );
 
 create table if not exists ding_approve (
