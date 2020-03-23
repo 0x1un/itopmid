@@ -17,12 +17,13 @@ func SendSingleTicketToDingtalkProcess(content *support.ResponseContent) error {
 	if resp.ErrCode != 0 {
 		return fmt.Errorf("%s", resp.ErrMsg)
 	}
-	if err := insertDingProcessID(resp.ProcessInstanceId); err != nil {
-		return err
-	}
+	// if err := insertDingProcessID(resp.ProcessInstanceId); err != nil {
+	// 	return err
+	// }
 	// if err := setItopTicketFlag(ref); err != nil {
 	// 	return err
 	// }
+	content.Filed.DingProcessInstanceId = resp.ProcessInstanceId
 	iface.LOGGER.Info("Sent ticket: *%s* to dingtalk process", ref)
 	return nil
 }
