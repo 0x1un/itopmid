@@ -51,14 +51,31 @@ func main() {
 	// if iface.RETRY_QUEUE.Len() > 0 {
 	// 	fmt.Println(iface.RETRY_QUEUE)
 	// }
-	intChan := make(chan int, 1)
-	ticker := time.NewTicker(time.Second * 2)
+
+	// code := core.GetProcessStatusByID("ff95678a-0140-46c7-8fc0-2caa302259b6")
+	ticker := time.NewTicker(time.Duration(time.Second * 3))
+	defer ticker.Stop()
+	code := make(chan int)
 	go func() {
-		for {
-			fmt.Println("begin")
-			select {
-			case intChan <- core.GetProcessStatusByID("6313f7f8-600c-44de-bf7d-7e3449e429c8"):
-			}
+		for t := range ticker.C {
+			fmt.Println("Current time: ", t)
+			code <- core.GetProcessStatusByID("ff95678a-0140-46c7-8fc0-2caa302259b6")
 		}
 	}()
+	for c := range code {
+		switch c {
+		case core.PROCESS_IS_NEW:
+			fmt.Println("Process is new")
+		case core.PROCESS_IS_RUNNING:
+			fmt.Println("Process is running...")
+		case core.PROCESS_IS_COMPLETED:
+			fmt.Println("Process is completed")
+			return
+		case core.PROCESS_IS_TERMINATED:
+			fmt.Println("Process is terminated")
+			return
+		default:
+			fmt.Println("未知错误..")
+		}
+	}
 }
