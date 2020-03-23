@@ -17,7 +17,7 @@ const (
 	DEFAULT_MOBILE_PHONE = "13800138000"
 )
 
-func FetcheFromITOP(url string, data io.Reader) {
+func FetchItopTicketAndSendToDingtalk(url string, data io.Reader) {
 	resp, err := Request(http.MethodPost, url, data)
 	if err != nil {
 		iface.LOGGER.Panic(err.Error())
