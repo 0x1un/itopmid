@@ -40,11 +40,13 @@ type Fileds struct {
 	Title                  string                   `json:"title" gorm:"column:title"`                                     // 标题
 	Description            string                   `json:"description" gorm:"column:description"`                         // 描述
 	Contacts               []map[string]interface{} `json:"contacts_list" gorm:"-"`
-	IsSend                 bool                     `json:"-" gorm:"column:send"`
 	MobilePhone            string                   `json:"mobile_phone" gorm:"-"`
 	Phone                  string                   `json:"phone" gorm:"-"`
 	Name                   string                   `json:"name" gorm:"-"`
 	FirstName              string                   `json:"first_name" gorm:"-"`
+	DingProcessInstanceId  string                   `json:"-" gorm:"column:processid"`
+	Resolved               bool                     `json:"-" gorm:"column:resolved"`
+	IsSend                 bool                     `json:"-" gorm:"column:send"`
 }
 
 type ResponseContent struct {
