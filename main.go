@@ -1,6 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"time"
+
+	"github.com/0x1un/boxes/dingtalk/api"
 	"github.com/0x1un/itopmid/core"
 	"github.com/0x1un/itopmid/iface"
 	"github.com/0x1un/itopmid/support"
@@ -32,24 +36,29 @@ func init() {
 	iface.RETRY_QUEUE = queue
 
 	// init dingtalk client
-	// client := api.NewClient(iface.CONFIG.GetDingAppkey(), iface.CONFIG.GetDingAppsecret())
-	// client.ProcessReq.DeptId = iface.CONFIG.GetDingDeptID()
-	// client.ProcessReq.AgentId = iface.CONFIG.GetDingAgentID()
-	// client.ProcessReq.OriginatorUserId = iface.CONFIG.GetDingUserID()
-	// client.ProcessReq.ProcessCode = iface.CONFIG.GetDingApprovID()
-	// iface.CLIENT = client
+	client := api.NewClient(iface.CONFIG.GetDingAppkey(), iface.CONFIG.GetDingAppsecret())
+	client.ProcessReq.DeptId = iface.CONFIG.GetDingDeptID()
+	client.ProcessReq.AgentId = iface.CONFIG.GetDingAgentID()
+	client.ProcessReq.OriginatorUserId = iface.CONFIG.GetDingUserID()
+	client.ProcessReq.ProcessCode = iface.CONFIG.GetDingApprovID()
+	iface.CLIENT = client
 }
 
 func main() {
-	core.UpdateItopTicket("R-000006")
+	defer iface.CONTEXT.CloseDB()
 
-	// defer iface.CONTEXT.CloseDB()
-
-	// core.FetcheFromITOP(iface.CONFIG.GetItopUrl(), iface.REQUEST.GenUserRequest())
+	// core.FetchItopTicketAndSendToDingtalk(iface.CONFIG.GetItopUrl(), iface.REQUEST.GenUserRequest())
 	// if iface.RETRY_QUEUE.Len() > 0 {
 	// 	fmt.Println(iface.RETRY_QUEUE)
 	// }
-	// code := core.GetProcessStatusByID("629e713f-5973-469a-a1f5-359b0df22a7c")
-	// fmt.Println(code)
-
+	intChan := make(chan int, 1)
+	ticker := time.NewTicker(time.Second * 2)
+	go func() {
+		for {
+			fmt.Println("begin")
+			select {
+			case intChan <- core.GetProcessStatusByID("6313f7f8-600c-44de-bf7d-7e3449e429c8"):
+			}
+		}
+	}()
 }
