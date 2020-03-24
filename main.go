@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/0x1un/boxes/dingtalk/api"
 	"github.com/0x1un/itopmid/core"
@@ -47,35 +46,33 @@ func init() {
 func main() {
 	defer iface.CONTEXT.CloseDB()
 
-	// core.FetchItopTicketAndSendToDingtalk(iface.CONFIG.GetItopUrl(), iface.REQUEST.GenUserRequest())
-	// if iface.RETRY_QUEUE.Len() > 0 {
-	// 	fmt.Println(iface.RETRY_QUEUE)
-	// }
-
-	// code := core.GetProcessStatusByID("ff95678a-0140-46c7-8fc0-2caa302259b6")
-	ticker := time.NewTicker(time.Duration(time.Second * 3))
-	defer ticker.Stop()
-	code := make(chan int)
-	go func() {
-		for t := range ticker.C {
-			fmt.Println("Current time: ", t)
-			code <- core.GetProcessStatusByID("ff95678a-0140-46c7-8fc0-2caa302259b6")
-		}
-	}()
-	for c := range code {
-		switch c {
-		case core.PROCESS_IS_NEW:
-			fmt.Println("Process is new")
-		case core.PROCESS_IS_RUNNING:
-			fmt.Println("Process is running...")
-		case core.PROCESS_IS_COMPLETED:
-			fmt.Println("Process is completed")
-			return
-		case core.PROCESS_IS_TERMINATED:
-			fmt.Println("Process is terminated")
-			return
-		default:
-			fmt.Println("未知错误..")
-		}
+	core.FetchItopTicketAndSendToDingtalk(iface.CONFIG.GetItopUrl(), iface.REQUEST.GenUserRequest())
+	if iface.RETRY_QUEUE.Len() > 0 {
+		fmt.Println(iface.RETRY_QUEUE)
 	}
+
+	// ticker := time.NewTicker(time.Duration(time.Second * 5))
+	// defer ticker.Stop()
+	// code := make(chan int)
+	// go func() {
+	// 	for range ticker.C {
+	// 		code <- core.GetProcessStatusByID("89131548-abed-47ef-925f-f97f35d6a9a5")
+	// 	}
+	// }()
+	// for c := range code {
+	// 	switch c {
+	// 	case core.PROCESS_IS_NEW:
+	// 		fmt.Println("Process is new")
+	// 	case core.PROCESS_IS_RUNNING:
+	// 		fmt.Println("Process is running...")
+	// 	case core.PROCESS_IS_COMPLETED:
+	// 		fmt.Println("Process is completed")
+	// 		return
+	// 	case core.PROCESS_IS_TERMINATED:
+	// 		fmt.Println("Process is terminated")
+	// 		return
+	// 	default:
+	// 		fmt.Println("未知错误..")
+	// 	}
+	// }
 }
