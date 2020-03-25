@@ -30,9 +30,11 @@ func init() {
 	context.OpenDB("postgres")
 	iface.CONTEXT = context
 
-	// init retry queuer
-	queue := &support.RetryQueue{}
-	iface.RETRY_QUEUE = queue
+	// init retry queue & ticket queue
+	rqueue := &support.Queue{}
+	tqueue := &support.Queue{}
+	iface.RETRY_QUEUE = rqueue
+	iface.TICKET_QUEUE = tqueue
 
 	// init dingtalk client
 	client := api.NewClient(iface.CONFIG.GetDingAppkey(), iface.CONFIG.GetDingAppsecret())
