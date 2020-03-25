@@ -1,12 +1,12 @@
 package support
 
-type RetryQueue []ResponseContent
+type Queue []ResponseContent
 
-func (self *RetryQueue) Push(respContent interface{}) {
+func (self *Queue) Push(respContent interface{}) {
 	*self = append(*self, (ResponseContent)(respContent.(ResponseContent)))
 }
 
-func (self *RetryQueue) Pop() interface{} {
+func (self *Queue) Pop() interface{} {
 	if n := len(*self); n == 0 {
 		return nil
 	} else {
@@ -16,6 +16,6 @@ func (self *RetryQueue) Pop() interface{} {
 	}
 }
 
-func (self *RetryQueue) Len() int {
+func (self *Queue) Len() int {
 	return len(*self)
 }
