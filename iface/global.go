@@ -16,4 +16,6 @@ var REQUEST Requester // ITOP 请求的数据，包含UserRequest, Contact, Pers
 
 var CLIENT *api.DingTalkClient
 
-var RETRY_QUEUE TicketRetryQueuer
+var RETRY_QUEUE Queuer
+
+var TICKET_QUEUE Queuer
