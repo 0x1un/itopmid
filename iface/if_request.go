@@ -9,7 +9,7 @@ type Requester interface {
 	GenPersonRequest(friendlyname string) *strings.Reader
 }
 
-type TicketRetryQueuer interface {
+type Queuer interface {
 	Pop() interface{}
 	Push(content interface{})
 	Len() int
