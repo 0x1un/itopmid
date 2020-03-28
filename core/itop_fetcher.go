@@ -29,6 +29,7 @@ func FetchItopTicketAndSendToDingtalk(url string, data io.Reader) {
 	for _, v := range t.Object {
 		ref := v.Filed.Ref
 		phone := DEFAULT_MOBILE_PHONE
+		// extract mobile phone number
 		if friendlyname := extractFriendlyNameByContact(v.Filed.Contacts); friendlyname != "" {
 			reqData := iface.REQUEST.GenPersonRequest(friendlyname)
 			presp, err := Request(http.MethodPost, url, reqData)
@@ -36,7 +37,7 @@ func FetchItopTicketAndSendToDingtalk(url string, data io.Reader) {
 				iface.LOGGER.Panic(err.Error())
 			}
 			// rct = responseContent
-			rct := new(support.UserReqResponse)
+			rct := &support.UserReqResponse{}
 			if err := json.Unmarshal(presp, rct); err != nil {
 				iface.LOGGER.Error(err.Error())
 			}
@@ -59,6 +60,8 @@ func FetchItopTicketAndSendToDingtalk(url string, data io.Reader) {
 				continue
 			}
 			iface.LOGGER.Info("ref: %s is inserted", ref)
+			// push ticket to queue when successfully sent to dingtalk
+			iface.TICKET_QUEUE.Set(v.Filed.Ref, v.Filed.DingProcessInstanceId)
 		} else {
 			iface.LOGGER.Debug("Entry may already exist or sended")
 		}
