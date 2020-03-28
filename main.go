@@ -2,11 +2,16 @@ package main
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/0x1un/boxes/dingtalk/api"
 	"github.com/0x1un/itopmid/core"
 	"github.com/0x1un/itopmid/iface"
 	"github.com/0x1un/itopmid/support"
+)
+
+const (
+	DURATION = time.Second * 2
 )
 
 func init() {
@@ -32,7 +37,7 @@ func init() {
 
 	// init retry queue & ticket queue
 	rqueue := &support.Queue{}
-	tqueue := &support.Queue{}
+	tqueue := &support.TicketQueue{}
 	iface.RETRY_QUEUE = rqueue
 	iface.TICKET_QUEUE = tqueue
 
@@ -47,34 +52,34 @@ func init() {
 
 func main() {
 	defer iface.CONTEXT.CloseDB()
+	ticker := time.NewTicker(DURATION)
+	defer ticker.Stop()
 
-	core.FetchItopTicketAndSendToDingtalk(iface.CONFIG.GetItopUrl(), iface.REQUEST.GenUserRequest())
-	if iface.RETRY_QUEUE.Len() > 0 {
-		fmt.Println(iface.RETRY_QUEUE)
+	// done := make(chan time.Time)
+
+	for range ticker.C {
+		core.FetchItopTicketAndSendToDingtalk(iface.CONFIG.GetItopUrl(), iface.REQUEST.GenUserRequest())
+		for k, v := range iface.TICKET_QUEUE.Self() {
+			go func(ref, id string) {
+				c := core.GetProcessStatusByID(id)
+				switch c {
+				case core.PROCESS_IS_NEW:
+					iface.LOGGER.Info("The process is new")
+				case core.PROCESS_IS_RUNNING:
+					iface.LOGGER.Info("The process is running")
+				case core.PROCESS_IS_COMPLETED:
+					iface.LOGGER.Info("The process is completed")
+					iface.TICKET_QUEUE.Del(ref)
+				case core.PROCESS_IS_TERMINATED:
+					iface.LOGGER.Info("The process is terminated")
+					iface.TICKET_QUEUE.Del(ref)
+				default:
+					iface.LOGGER.Info("The process is unkown")
+				}
+				fmt.Println(iface.TICKET_QUEUE.Self())
+
+			}(k, v)
+		}
 	}
 
-	// ticker := time.NewTicker(time.Duration(time.Second * 5))
-	// defer ticker.Stop()
-	// code := make(chan int)
-	// go func() {
-	// 	for range ticker.C {
-	// 		code <- core.GetProcessStatusByID("89131548-abed-47ef-925f-f97f35d6a9a5")
-	// 	}
-	// }()
-	// for c := range code {
-	// 	switch c {
-	// 	case core.PROCESS_IS_NEW:
-	// 		fmt.Println("Process is new")
-	// 	case core.PROCESS_IS_RUNNING:
-	// 		fmt.Println("Process is running...")
-	// 	case core.PROCESS_IS_COMPLETED:
-	// 		fmt.Println("Process is completed")
-	// 		return
-	// 	case core.PROCESS_IS_TERMINATED:
-	// 		fmt.Println("Process is terminated")
-	// 		return
-	// 	default:
-	// 		fmt.Println("未知错误..")
-	// 	}
-	// }
 }
