@@ -18,4 +18,4 @@ var CLIENT *api.DingTalkClient
 
 var RETRY_QUEUE Queuer
 
-var TICKET_QUEUE Queuer
+var TICKET_QUEUE TicketQueuer
