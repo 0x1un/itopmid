@@ -22,7 +22,7 @@ func FetchItopTicketAndSendToDingtalk(url string, data io.Reader) {
 	if err != nil {
 		iface.LOGGER.Panic(err.Error())
 	}
-	t := new(support.UserReqResponse)
+	t := &support.UserReqResponse{}
 	if err := json.Unmarshal(resp, t); err != nil {
 		iface.LOGGER.Panic(err.Error())
 	}
@@ -63,7 +63,7 @@ func FetchItopTicketAndSendToDingtalk(url string, data io.Reader) {
 			// push ticket to queue when successfully sent to dingtalk
 			iface.TICKET_QUEUE.Set(v.Filed.Ref, v.Filed.DingProcessInstanceId)
 		} else {
-			iface.LOGGER.Debug("Entry may already exist or sended")
+			// iface.LOGGER.Debug("Entry may already exist or sended")
 		}
 	}
 }
