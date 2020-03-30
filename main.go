@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/0x1un/boxes/dingtalk/api"
@@ -64,19 +63,18 @@ func main() {
 				c := core.GetProcessStatusByID(id)
 				switch c {
 				case core.PROCESS_IS_NEW:
-					iface.LOGGER.Info("The process is new")
+					iface.LOGGER.Info("%s: the process is new", ref)
 				case core.PROCESS_IS_RUNNING:
-					iface.LOGGER.Info("The process is running")
+					iface.LOGGER.Info("%s: the process is running", ref)
 				case core.PROCESS_IS_COMPLETED:
-					iface.LOGGER.Info("The process is completed")
+					iface.LOGGER.Info("%s: The process is completed", ref)
 					iface.TICKET_QUEUE.Del(ref)
 				case core.PROCESS_IS_TERMINATED:
-					iface.LOGGER.Info("The process is terminated")
+					iface.LOGGER.Info("%s: the process is terminated", ref)
 					iface.TICKET_QUEUE.Del(ref)
 				default:
-					iface.LOGGER.Info("The process is unkown")
+					iface.LOGGER.Info("%s: the process is unkown", ref)
 				}
-				fmt.Println(iface.TICKET_QUEUE.Self())
 
 			}(k, v)
 		}
