@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	DURATION = time.Second * 2
+	DURATION = time.Second * 5
 )
 
 func init() {
