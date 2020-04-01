@@ -59,25 +59,26 @@ func main() {
 	for range ticker.C {
 		core.FetchItopTicketAndSendToDingtalk(iface.CONFIG.GetItopUrl(), iface.REQUEST.GenUserRequest())
 		for k, v := range iface.TICKET_QUEUE.Self() {
-			go func(ref, id string) {
-				c := core.GetProcessStatusByID(id)
-				switch c {
-				case core.PROCESS_IS_NEW:
-					iface.LOGGER.Info("%s: the process is new", ref)
-				case core.PROCESS_IS_RUNNING:
-					iface.LOGGER.Info("%s: the process is running", ref)
-				case core.PROCESS_IS_COMPLETED:
-					iface.LOGGER.Info("%s: The process is completed", ref)
-					iface.TICKET_QUEUE.Del(ref)
-				case core.PROCESS_IS_TERMINATED:
-					iface.LOGGER.Info("%s: the process is terminated", ref)
-					iface.TICKET_QUEUE.Del(ref)
-				default:
-					iface.LOGGER.Info("%s: the process is unkown", ref)
-				}
-
-			}(k, v)
+			go checkDingTicket(k, v)
 		}
 	}
 
+}
+
+func checkDingTicket(ref, id string) {
+	c := core.GetProcessStatusByID(id)
+	switch c {
+	case core.PROCESS_IS_NEW:
+		iface.LOGGER.Info("%s: the process is new", ref)
+	case core.PROCESS_IS_RUNNING:
+		iface.LOGGER.Info("%s: the process is running", ref)
+	case core.PROCESS_IS_COMPLETED:
+		iface.LOGGER.Info("%s: The process is completed", ref)
+		iface.TICKET_QUEUE.Del(ref)
+	case core.PROCESS_IS_TERMINATED:
+		iface.LOGGER.Info("%s: the process is terminated", ref)
+		iface.TICKET_QUEUE.Del(ref)
+	default:
+		iface.LOGGER.Info("%s: the process is unkown", ref)
+	}
 }
