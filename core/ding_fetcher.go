@@ -66,4 +66,5 @@ func UpdateItopTicket(ref, k, v string) {
 		return
 	}
 	iface.LOGGER.Info("%s is updated", ref)
+	// TODO: update resolved flag is true
 }
