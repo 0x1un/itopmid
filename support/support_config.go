@@ -23,6 +23,7 @@ type ItopMidConfig struct {
 	PostgresUname  string `json:"postgresuname"`
 	PostgresPasswd string `json:"postgrespasswd"`
 	PostgresDb     string `json:"postgresdb"`
+	Debug          bool   `json:"debug"`
 }
 
 func (self *ItopMidConfig) GetItopUrl() string {

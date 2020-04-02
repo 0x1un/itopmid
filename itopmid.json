@@ -12,5 +12,6 @@
     "postgresport": "5432",
     "postgresuname": "itop",
     "postgrespasswd": "goodluck@123",
-    "postgresdb": "itopmiddleware"
+    "postgresdb": "itopmiddleware",
+    "debug": false
 }
