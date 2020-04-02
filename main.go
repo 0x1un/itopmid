@@ -74,9 +74,11 @@ func checkDingTicket(ref, id string) {
 		iface.LOGGER.Info("%s: the process is running", ref)
 	case core.PROCESS_IS_COMPLETED:
 		iface.LOGGER.Info("%s: The process is completed", ref)
+		core.UpdateItopTicket(ref, "new", "resolved")
 		iface.TICKET_QUEUE.Del(ref)
 	case core.PROCESS_IS_TERMINATED:
 		iface.LOGGER.Info("%s: the process is terminated", ref)
+		core.UpdateItopTicket(ref, "new", "rejected")
 		iface.TICKET_QUEUE.Del(ref)
 	default:
 		iface.LOGGER.Info("%s: the process is unkown", ref)
