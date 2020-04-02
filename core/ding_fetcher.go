@@ -38,9 +38,9 @@ func GetProcessStatusByID(id string) int {
 	return PROCESS_UNKOWN_ERROR
 }
 
-// ref => itop ticket number
-// k => query conditaion
-// v => change value
+// ref is itop ticket number;
+// k is query conditaion (status: resolved/new);
+// v is change value (status=new/pending/rejected/resolved...)
 func UpdateItopTicket(ref, k, v string) {
 	key := &support.UpdateKey{
 		Status: k,
@@ -65,6 +65,20 @@ func UpdateItopTicket(ref, k, v string) {
 		iface.LOGGER.Error(t.Message)
 		return
 	}
+	if err := updateField(ref, "resolved", true); err != nil {
+		iface.LOGGER.Error(err.Error())
+		return
+	}
 	iface.LOGGER.Info("%s is updated", ref)
-	// TODO: update resolved flag is true
+}
+
+func updateField(ref, target string, value interface{}) error {
+	h := iface.CONTEXT.GetDB().Begin()
+	err := h.Table("itop_ticket").Where("ref=?", ref).Update(target, value).Error
+	if err != nil {
+		h.Rollback()
+		return err
+	}
+	h.Commit()
+	return nil
 }
