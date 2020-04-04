@@ -9,6 +9,7 @@ import (
 	"github.com/0x1un/itopmid/support"
 )
 
+// ticker duration
 const (
 	DURATION = time.Second * 5
 )
@@ -55,7 +56,6 @@ func main() {
 	defer ticker.Stop()
 
 	// done := make(chan time.Time)
-
 	for range ticker.C {
 		core.FetchItopTicketAndSendToDingtalk(iface.CONFIG.GetItopUrl(), iface.REQUEST.GenUserRequest())
 		for k, v := range iface.TICKET_QUEUE.Self() {
