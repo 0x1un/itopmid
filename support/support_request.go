@@ -14,7 +14,7 @@ const (
 	USER_REQUEST_OPERATION    = "core/get"
 	USER_REQUEST_CLASS        = "UserRequest"
 	USER_REQUEST_KEY          = "SELECT UserRequest WHERE operational_status = \"ongoing\""
-	USER_REQUEST_OUTPUTFIELDS = "ref,request_type,servicesubcategory_name,urgency,origin,caller_id_friendlyname,impact,title,description,contacts_list"
+	USER_REQUEST_OUTPUTFIELDS = "ref,request_type,servicesubcategory_name,urgency,origin,caller_id_friendlyname,impact,title,description,contacts_list,status"
 
 	// contact request message
 	PERSON_REQUEST_OPERATION    = "core/get"
@@ -44,6 +44,7 @@ type Fileds struct {
 	Phone                  string                   `json:"phone" gorm:"-"`
 	Name                   string                   `json:"name" gorm:"-"`
 	FirstName              string                   `json:"first_name" gorm:"-"`
+	Status                 string                   `json:"status" gorm:"-"`
 	DingProcessInstanceId  string                   `json:"-" gorm:"column:processid"`
 	Resolved               bool                     `json:"-" gorm:"column:resolved"`
 	IsSend                 bool                     `json:"-" gorm:"column:send"`
