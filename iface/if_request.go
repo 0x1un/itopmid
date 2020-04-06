@@ -21,4 +21,5 @@ type TicketQueuer interface {
 	Set(k, v string)
 	Del(k string)
 	Self() map[string]string
+	Get(key string) string
 }
