@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/0x1un/boxes/dingtalk/api"
@@ -38,8 +39,10 @@ func init() {
 	// init retry queue & ticket queue
 	rqueue := &support.Queue{}
 	tqueue := &support.TicketQueue{}
+	squeue := &support.TicketQueue{}
 	iface.RETRY_QUEUE = rqueue
 	iface.TICKET_QUEUE = tqueue
+	iface.STATUS_QUEUE = squeue
 
 	// init dingtalk client
 	client := api.NewClient(iface.CONFIG.GetDingAppkey(), iface.CONFIG.GetDingAppsecret())
@@ -67,6 +70,8 @@ func main() {
 
 func checkDingTicket(ref, id string) {
 	c := core.GetProcessStatusByID(id)
+	status := iface.STATUS_QUEUE.Get(id)
+	fmt.Println(status)
 	switch c {
 	case core.PROCESS_IS_NEW:
 		iface.LOGGER.Info("%s: the process is new", ref)
@@ -74,11 +79,11 @@ func checkDingTicket(ref, id string) {
 		iface.LOGGER.Info("%s: the process is running", ref)
 	case core.PROCESS_IS_COMPLETED:
 		iface.LOGGER.Info("%s: The process is completed", ref)
-		core.UpdateItopTicket(ref, "new", "resolved")
+		core.UpdateItopTicket(ref, status, "resolved")
 		iface.TICKET_QUEUE.Del(ref)
 	case core.PROCESS_IS_TERMINATED:
 		iface.LOGGER.Info("%s: the process is terminated", ref)
-		core.UpdateItopTicket(ref, "new", "rejected")
+		core.UpdateItopTicket(ref, status, "rejected")
 		iface.TICKET_QUEUE.Del(ref)
 	default:
 		iface.LOGGER.Info("%s: the process is unkown", ref)
