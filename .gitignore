@@ -1,4 +1,2 @@
-.token.json
-itopmid
-itopmid.json
-itopmid.json.b
+itopmid.*
+.token*
