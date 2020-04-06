@@ -16,6 +16,14 @@ func (self TicketQueue) Self() map[string]string {
 	return self
 }
 
+func (self TicketQueue) Get(key string) string {
+	if v, ok := self[key]; !ok {
+		return ""
+	} else {
+		return v
+	}
+}
+
 func (self *Queue) Push(respContent interface{}) {
 	switch respContent.(type) {
 	case string:
