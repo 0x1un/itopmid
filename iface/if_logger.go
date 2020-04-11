@@ -1,7 +1,7 @@
 package iface
 
 type Logger interface {
-	Log(prefix, format string, v ...interface{}) string
+	Log(prefix, format string, v ...interface{})
 
 	// Log level
 	Debug(format string, v ...interface{})
