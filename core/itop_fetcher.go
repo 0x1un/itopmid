@@ -62,6 +62,7 @@ func FetchItopTicketAndSendToDingtalk(url string, data io.Reader) {
 			iface.LOGGER.Info("ref: %s is inserted", ref)
 			// push ticket to queue when successfully sent to dingtalk
 			iface.TICKET_QUEUE.Set(v.Filed.Ref, v.Filed.DingProcessInstanceId)
+			iface.STATUS_QUEUE.Set(v.Filed.DingProcessInstanceId, v.Filed.Status)
 		} else {
 			// iface.LOGGER.Debug("Entry may already exist or sended")
 		}

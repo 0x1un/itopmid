@@ -14,6 +14,9 @@ func SendSingleTicketToDingtalkProcess(content *support.ResponseContent) error {
 	if err != nil {
 		return err
 	}
+	if resp.ErrCode == 40000 {
+		// TODO: refresh dingtalk access_token
+	}
 	if resp.ErrCode != 0 {
 		return fmt.Errorf("%s", resp.ErrMsg)
 	}
