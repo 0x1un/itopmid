@@ -1,5 +1,8 @@
 #!/usr/bin/python3
-import requests, json
+
+import json
+
+import requests
 
 HOST = "http://127.0.0.1:8000/webservices/rest.php?version=1.3"
 
