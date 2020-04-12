@@ -21,7 +21,7 @@ func SendSingleTicketToDingtalkProcess(content *support.ResponseContent) error {
 		return fmt.Errorf("%s", resp.ErrMsg)
 	}
 	content.Filed.DingProcessInstanceId = resp.ProcessInstanceId
-	iface.LOGGER.Info("Sent ticket: *%s* to dingtalk process", ref)
+	iface.LOGGER.Info("Sent ticket: *%s* to dingtalk", ref)
 	return nil
 }
 

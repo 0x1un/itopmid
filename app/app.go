@@ -30,13 +30,14 @@ func Run() {
 	}
 
 	APPLICATION.Start()
+	fmt.Println(iface.CONFIG.GetDingAgentID())
 }
 
 func (self *ItopMidApp) init() {
 
 	// load config
 	config := &support.ItopMidConfig{}
-	config.ReadConfigFile("itopmid.json")
+	config.ReadConfigFile("conf/conf.json")
 	iface.CONFIG = config
 	iface.ITOP_USERNAME = iface.CONFIG.GetItopUsername()
 	iface.ITOP_PASSWORD = iface.CONFIG.GetItopPassword()
@@ -69,6 +70,7 @@ func (self *ItopMidApp) init() {
 	client.ProcessReq.OriginatorUserId = iface.CONFIG.GetDingUserID()
 	client.ProcessReq.ProcessCode = iface.CONFIG.GetDingApprovID()
 	iface.CLIENT = client
+
 }
 
 func (self *ItopMidApp) Start() {
@@ -89,21 +91,20 @@ func (self *ItopMidApp) Start() {
 func checkDingTicket(ref, id string) {
 	c := core.GetProcessStatusByID(id)
 	status := iface.STATUS_QUEUE.Get(id)
-	fmt.Println(status)
 	switch c {
 	case core.PROCESS_IS_NEW:
-		iface.LOGGER.Info("%s: the process is new", ref)
+		iface.LOGGER.Info("%s: => new", ref)
 	case core.PROCESS_IS_RUNNING:
-		iface.LOGGER.Info("%s: the process is running", ref)
+		iface.LOGGER.Info("%s: => running", ref)
 	case core.PROCESS_IS_COMPLETED:
-		iface.LOGGER.Info("%s: The process is completed", ref)
+		iface.LOGGER.Info("%s: => completed", ref)
 		core.UpdateItopTicket(ref, status, "resolved")
 		iface.TICKET_QUEUE.Del(ref)
 	case core.PROCESS_IS_TERMINATED:
-		iface.LOGGER.Info("%s: the process is terminated", ref)
+		iface.LOGGER.Info("%s: => terminated", ref)
 		core.UpdateItopTicket(ref, status, "rejected")
 		iface.TICKET_QUEUE.Del(ref)
 	default:
-		iface.LOGGER.Info("%s: the process is unkown", ref)
+		iface.LOGGER.Info("%s: => unkown", ref)
 	}
 }

@@ -61,10 +61,13 @@ func FetchItopTicketAndSendToDingtalk(url string, data io.Reader) {
 			}
 			iface.LOGGER.Info("ref: %s is inserted", ref)
 			// push ticket to queue when successfully sent to dingtalk
-			iface.TICKET_QUEUE.Set(v.Filed.Ref, v.Filed.DingProcessInstanceId)
+			iface.TICKET_QUEUE.Set(ref, v.Filed.DingProcessInstanceId)
 			iface.STATUS_QUEUE.Set(v.Filed.DingProcessInstanceId, v.Filed.Status)
-		} else {
-			// iface.LOGGER.Debug("Entry may already exist or sended")
+		} else if resolved(ref) {
+			// if the ticket is already sent to dingtalk, then push to queue
+			id := getIdByRef(ref)
+			iface.TICKET_QUEUE.Set(ref, id)
+			iface.STATUS_QUEUE.Set(id, v.Filed.Status)
 		}
 	}
 }
@@ -82,6 +85,21 @@ func insertTicketITOP(ticket support.Fileds) error {
 	return nil
 }
 
+func getIdByRef(ref string) string {
+	h := iface.CONTEXT.GetDB()
+	type processid struct {
+		Id string `gorm:"column:processid"`
+	}
+	id := processid{}
+	err := h.Table("itop_ticket").Select("processid").Where("ref = ?", ref).Scan(&id).Error
+	// Scan(id).RecordNotFound()
+	if err != nil {
+		iface.LOGGER.Error(err.Error())
+		return ""
+	}
+	return id.Id
+}
+
 func entryNotFound(ref string) bool {
 	h := iface.CONTEXT.GetDB()
 	h = h.Table("itop_ticket")
@@ -90,6 +108,14 @@ func entryNotFound(ref string) bool {
 		return true
 	}
 	return false
+}
+func resolved(ref string) bool {
+	h := iface.CONTEXT.GetDB()
+	nf := h.Table("itop_ticket").Select("ref").Where("resolved=?", false).Scan(&struct{ Resolved bool }{}).RecordNotFound()
+	if nf {
+		return false
+	}
+	return true
 }
 
 func extractFriendlyNameByContact(ctt []map[string]interface{}) string {
