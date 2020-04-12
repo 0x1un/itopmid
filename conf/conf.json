@@ -1,0 +1,17 @@
+{
+    "itopurl": "http://127.0.0.1:8000/webservices/rest.php?version=1.3",
+    "itopusername": "admin",
+    "itoppasswd": "goodluck@123.",
+    "dingappkey": "dingkimljpj2mycouknv",
+    "dingappsecret": "lowL72oqFecRwlHBjmkW2HnaOfl62lFOwDT8DMFdOG9iicteXsymH7TEtU5xWV3j",
+    "dingapprovid": "RPOC-DF144E91-AC5E-4938-A351-22338FF3B7D9",
+    "dingagentid": 341387440,
+    "dinguserid": "2749481918775803",
+    "dingdeptid": 358535036,
+    "postgresaddr": "localhost",
+    "postgresport": "5432",
+    "postgresuname": "itop",
+    "postgrespasswd": "goodluck@123",
+    "postgresdb": "itopmiddleware",
+    "debug": false
+}
