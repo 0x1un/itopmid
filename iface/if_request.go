@@ -10,11 +10,11 @@ type Requester interface {
 }
 
 type Queuer interface {
-	Pop() interface{}
+	Len() int
 	Push(content interface{})
 	Tail() interface{}
 	Self() interface{}
-	Len() int
+	Pop() interface{}
 }
 
 type TicketQueuer interface {

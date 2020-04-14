@@ -1,7 +1,6 @@
 package app
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/0x1un/boxes/dingtalk/api"
@@ -24,13 +23,10 @@ type ItopMidApp struct {
 	Duration time.Duration
 }
 
-func Run() {
+func Init() {
 	APPLICATION = &ItopMidApp{
 		Duration: time.Duration(time.Second * 5),
 	}
-
-	APPLICATION.Start()
-	fmt.Println(iface.CONFIG.GetDingAgentID())
 }
 
 func (self *ItopMidApp) init() {
